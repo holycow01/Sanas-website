@@ -3,13 +3,6 @@ import type { Product, ProductSortKey } from "./shopify/types";
 export const SIZES = ["S", "M", "L"] as const;
 export type Size = (typeof SIZES)[number];
 
-export const CATEGORIES = [
-  { value: "pret", label: "Pret" },
-  { value: "formals", label: "Formals" },
-  { value: "festive", label: "Festive" },
-] as const;
-export type Category = (typeof CATEGORIES)[number]["value"];
-
 export const SORTS = [
   { value: "newest", label: "Newest" },
   { value: "price-asc", label: "Price · Low to High" },
@@ -22,7 +15,6 @@ export const PRICE_MAX = 20000;
 
 export type ParsedFilters = {
   sizes: Size[];
-  categories: Category[];
   priceMax: number;
   sort: Sort;
 };
@@ -39,10 +31,6 @@ export function parseFilters(searchParams: RawSearchParams): ParsedFilters {
   const sizes = asList(searchParams.size).filter((s): s is Size =>
     (SIZES as readonly string[]).includes(s),
   );
-  const categories = asList(searchParams.category).filter(
-    (c): c is Category =>
-      (CATEGORIES as readonly { value: string }[]).some((x) => x.value === c),
-  );
   const rawMax = Number(searchParams.priceMax);
   const priceMax =
     Number.isFinite(rawMax) && rawMax >= PRICE_MIN && rawMax <= PRICE_MAX
@@ -56,7 +44,7 @@ export function parseFilters(searchParams: RawSearchParams): ParsedFilters {
   )
     ? (sortRaw as Sort)
     : "newest";
-  return { sizes, categories, priceMax, sort };
+  return { sizes, priceMax, sort };
 }
 
 export function sortToShopify(sort: Sort): {
@@ -70,12 +58,9 @@ export function sortToShopify(sort: Sort): {
 
 export function applyClientFilters(
   products: Product[],
-  filters: Pick<ParsedFilters, "sizes" | "categories" | "priceMax">,
+  filters: Pick<ParsedFilters, "sizes" | "priceMax">,
 ): Product[] {
   return products.filter((p) => {
-    if (filters.categories.length && !filters.categories.includes(p.productType as Category)) {
-      return false;
-    }
     if (filters.sizes.length) {
       const productSizes = p.variants
         .map((v) => v.selectedOptions.find((o) => o.name === "Size")?.value)
@@ -94,7 +79,6 @@ export function applyClientFilters(
 export function isDefault(filters: ParsedFilters): boolean {
   return (
     filters.sizes.length === 0 &&
-    filters.categories.length === 0 &&
     filters.priceMax === PRICE_MAX &&
     filters.sort === "newest"
   );

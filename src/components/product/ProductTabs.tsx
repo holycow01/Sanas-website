@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Product } from "@/lib/shopify/types";
+import { SizeChart } from "./SizeChart";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -17,11 +18,12 @@ const CARE_DEFAULT =
   "Dry clean recommended. For light freshening, hand wash in cold water with mild detergent. Lay flat to dry, away from direct sunlight. Iron on low heat from the reverse.";
 
 export function ProductTabs({ product }: Props) {
-  const tabs = [
+  const tabs: Array<{ id: string; label: string; content: ReactNode }> = [
     { id: "description", label: "Description", content: product.description },
     { id: "fabric", label: "Fabric & Craft", content: FABRIC_DEFAULT },
     { id: "care", label: "Care", content: CARE_DEFAULT },
-  ] as const;
+    { id: "size", label: "Size Guide", content: <SizeChart /> },
+  ];
 
   // Desktop: tab strip; Mobile: collapsible accordion (default collapsed)
   const [activeDesktop, setActiveDesktop] = useState<string>("description");

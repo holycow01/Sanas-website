@@ -4,11 +4,9 @@ const COLUMNS: Array<{ title: string; links: Array<{ label: string; href: string
   {
     title: "Shop",
     links: [
-      { label: "Pret", href: "/collections/pret" },
-      { label: "Formals", href: "/collections/formals" },
-      { label: "Festive", href: "/collections/festive" },
+      { label: "All Products", href: "/shop" },
       { label: "New Arrivals", href: "/shop?sort=newest" },
-      { label: "Sale", href: "/shop?on-sale=true" },
+      { label: "Size Guide", href: "/size-guide" },
     ],
   },
   {

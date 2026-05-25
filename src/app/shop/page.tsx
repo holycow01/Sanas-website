@@ -88,7 +88,7 @@ function EmptyState() {
         Nothing matches your filters.
       </h2>
       <p className="max-w-[420px] text-sm text-bayan-muted">
-        Try widening the price, removing a size, or browsing all categories.
+        Try widening the price or removing a size.
       </p>
       <ClearFiltersLink className="mt-2" />
     </div>

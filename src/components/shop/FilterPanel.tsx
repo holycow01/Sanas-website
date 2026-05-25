@@ -3,15 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import {
-  CATEGORIES,
-  type Category,
-  PRICE_MAX,
-  PRICE_MIN,
-  SIZES,
-  type Size,
-  parseFilters,
-} from "@/lib/shop-filters";
+import { PRICE_MAX, PRICE_MIN, SIZES, parseFilters } from "@/lib/shop-filters";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -45,7 +37,7 @@ export function FilterPanel({ inline = false }: Props) {
   );
 
   const toggleInList = useCallback(
-    (key: "size" | "category", value: string) => {
+    (key: "size", value: string) => {
       const current = (search.get(key) ?? "")
         .split(",")
         .map((s) => s.trim())
@@ -121,27 +113,6 @@ export function FilterPanel({ inline = false }: Props) {
           className="w-full accent-bayan-primary-dark"
           aria-label="Maximum price"
         />
-      </FilterGroup>
-
-      <FilterGroup label="Category">
-        <ul className="space-y-3">
-          {CATEGORIES.map((c) => {
-            const active = filters.categories.includes(c.value as Category);
-            return (
-              <li key={c.value}>
-                <label className="flex cursor-pointer items-center gap-3 text-sm text-bayan-text">
-                  <input
-                    type="checkbox"
-                    checked={active}
-                    onChange={() => toggleInList("category", c.value)}
-                    className="h-4 w-4 accent-bayan-primary-dark"
-                  />
-                  <span className="font-medium">{c.label}</span>
-                </label>
-              </li>
-            );
-          })}
-        </ul>
       </FilterGroup>
     </div>
   );
