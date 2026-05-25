@@ -7,6 +7,7 @@ import { Footer } from "@/components/layout/Footer";
 import { WhatsAppFloat } from "@/components/layout/WhatsAppFloat";
 import { CartProvider } from "@/context/cart-context";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { getSiteUrl } from "@/lib/site";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -24,9 +25,20 @@ const jost = Jost({
 });
 
 export const metadata: Metadata = {
-  title: "Bayan — Woven in tradition, designed for today.",
+  metadataBase: new URL(getSiteUrl()),
+  title: {
+    default: "Bayan — Woven in tradition, designed for today.",
+    template: "%s",
+  },
   description:
     "Bayan is a premium Pakistani ethnic-wear atelier. Quiet luxury, woven by hand.",
+  openGraph: {
+    title: "Bayan — Ethnic Wear",
+    description:
+      "Premium Pakistani ethnic wear. Pret, formals and festive — crafted in Pakistan, worn anywhere.",
+    siteName: "Bayan",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

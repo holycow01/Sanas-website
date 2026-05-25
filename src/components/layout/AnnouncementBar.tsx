@@ -1,5 +1,5 @@
 const MESSAGES = [
-  "Free shipping on orders above PKR 5,000",
+  "Free shipping on orders above PKR 20,000",
   "Eid Collection drop coming soon",
   "Crafted in Pakistan, worn anywhere",
   "50% Advance · 50% on Delivery",

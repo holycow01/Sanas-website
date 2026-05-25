@@ -8,6 +8,7 @@ import { ProductInfo } from "@/components/product/ProductInfo";
 import { ProductTabs } from "@/components/product/ProductTabs";
 import { MobileStickyCTA } from "@/components/product/MobileStickyCTA";
 import { SectionHead } from "@/components/section-head";
+import { getSiteUrl } from "@/lib/site";
 
 type PageProps = {
   params: Promise<{ handle: string }>;
@@ -41,8 +42,30 @@ export default async function ProductPage({ params }: PageProps) {
 
   const related = await getRelatedProducts(product.id);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.title,
+    description: product.seo.description ?? product.description,
+    image: product.images.map((img) => img.url),
+    brand: { "@type": "Brand", name: "Bayan" },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: product.priceRange.minVariantPrice.currencyCode,
+      price: product.priceRange.minVariantPrice.amount,
+      availability: product.availableForSale
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      url: `${getSiteUrl()}/product/${product.handle}`,
+    },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section className="px-6 pb-16 pt-10 md:px-9 md:pt-14">
         <nav className="mx-auto mb-10 max-w-[1400px] text-[11px] uppercase tracking-[0.22em] text-bayan-muted">
           <Link href="/" className="hover:text-bayan-text">
