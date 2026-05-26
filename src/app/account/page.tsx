@@ -1,17 +1,26 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getCustomer, logoutAction } from "@/lib/shopify/customer";
+import { getCustomerAccount } from "@/lib/shopify/customer-account";
 import { formatPrice } from "@/lib/format";
-import { humanizeStatus, formatOrderDate } from "@/lib/account-format";
+import { formatOrderDate } from "@/lib/account-format";
 
 export const metadata: Metadata = {
   title: "My Account — Bayan",
   robots: { index: false, follow: false },
 };
 
+async function originFromHeaders(): Promise<string> {
+  const h = await headers();
+  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
+  const proto = h.get("x-forwarded-proto") ?? "https";
+  return `${proto}://${host}`;
+}
+
 export default async function AccountPage() {
-  const customer = await getCustomer();
+  const origin = await originFromHeaders();
+  const customer = await getCustomerAccount(origin);
   if (!customer) redirect("/account/login");
 
   const name = customer.firstName ?? "there";
@@ -31,14 +40,12 @@ export default async function AccountPage() {
               <p className="mt-2 text-sm text-bayan-muted">{customer.email}</p>
             ) : null}
           </div>
-          <form action={logoutAction}>
-            <button
-              type="submit"
-              className="rounded-full border border-bayan-text px-6 py-3 text-[11px] font-medium uppercase tracking-[0.28em] text-bayan-text transition-all duration-300 hover:bg-bayan-text hover:text-bayan-bg"
-            >
-              Sign Out
-            </button>
-          </form>
+          <a
+            href="/api/auth/logout"
+            className="rounded-full border border-bayan-text px-6 py-3 text-[11px] font-medium uppercase tracking-[0.28em] text-bayan-text transition-all duration-300 hover:bg-bayan-text hover:text-bayan-bg"
+          >
+            Sign Out
+          </a>
         </header>
 
         <h2 className="mb-6 text-[11px] font-medium uppercase tracking-[0.28em] text-bayan-text">
@@ -70,20 +77,17 @@ export default async function AccountPage() {
                     Order {order.name}
                   </div>
                   <div className="mt-0.5 text-[12px] text-bayan-muted">
-                    {formatOrderDate(order.processedAt)} ·{" "}
-                    {humanizeStatus(order.financialStatus)} ·{" "}
-                    {humanizeStatus(order.fulfillmentStatus)}
+                    {formatOrderDate(order.processedAt)}
                   </div>
                 </div>
                 <div className="flex items-center gap-6">
-                  <span className="text-sm font-medium text-bayan-text">
-                    {formatPrice(
-                      order.totalPrice.amount,
-                      order.totalPrice.currencyCode,
-                    )}
-                  </span>
+                  {order.total ? (
+                    <span className="text-sm font-medium text-bayan-text">
+                      {formatPrice(order.total.amount, order.total.currencyCode)}
+                    </span>
+                  ) : null}
                   <Link
-                    href={`/account/orders/${order.orderNumber}`}
+                    href={`/account/orders/${order.numericId}`}
                     className="border-b border-bayan-accent pb-0.5 text-[11px] uppercase tracking-[0.22em] text-bayan-text transition-colors hover:border-bayan-primary-dark hover:text-bayan-primary-dark"
                   >
                     View

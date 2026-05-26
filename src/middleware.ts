@@ -1,13 +1,17 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-const TOKEN_COOKIE = "bayan_customer_token";
+const ACCESS_COOKIE = "bayan_ca_access";
+const REFRESH_COOKIE = "bayan_ca_refresh";
 
-/** Protect /account/* — redirect to login when there's no auth token. */
+/** Protect /account/* — redirect to login when there's no session. */
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get(TOKEN_COOKIE)?.value;
+  // Access tokens are short-lived; a refresh token still counts as a session
+  // (the server refreshes the access token on demand).
+  const token =
+    request.cookies.get(ACCESS_COOKIE)?.value ??
+    request.cookies.get(REFRESH_COOKIE)?.value;
   const { pathname } = request.nextUrl;
-  const isAuthPage =
-    pathname === "/account/login" || pathname === "/account/register";
+  const isAuthPage = pathname === "/account/login";
 
   if (!token && !isAuthPage) {
     const url = request.nextUrl.clone();

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
-import { getCustomer } from "@/lib/shopify/customer";
+import { getCustomerAccount } from "@/lib/shopify/customer-account";
 import { formatPrice } from "@/lib/format";
-import { humanizeStatus, formatOrderDate } from "@/lib/account-format";
+import { formatOrderDate } from "@/lib/account-format";
 
 export const metadata: Metadata = {
   title: "Order — Bayan",
@@ -13,13 +13,21 @@ export const metadata: Metadata = {
 
 type PageProps = { params: Promise<{ id: string }> };
 
+async function originFromHeaders(): Promise<string> {
+  const h = await headers();
+  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
+  const proto = h.get("x-forwarded-proto") ?? "https";
+  return `${proto}://${host}`;
+}
+
 export default async function OrderDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const customer = await getCustomer();
+  const origin = await originFromHeaders();
+  const customer = await getCustomerAccount(origin);
   if (!customer) redirect("/account/login");
 
   const order = customer.orders.find(
-    (o) => String(o.orderNumber) === id || o.name === id || o.name === `#${id}`,
+    (o) => o.numericId === id || o.name === id || o.name === `#${id}`,
   );
   if (!order) notFound();
 
@@ -41,67 +49,32 @@ export default async function OrderDetailPage({ params }: PageProps) {
           <p className="mt-2 text-sm text-bayan-muted">
             Placed {formatOrderDate(order.processedAt)}
           </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Badge label={`Payment · ${humanizeStatus(order.financialStatus)}`} />
-            <Badge
-              label={`Fulfilment · ${humanizeStatus(order.fulfillmentStatus)}`}
-            />
-          </div>
         </header>
 
         <ul className="divide-y divide-bayan-line border-y border-bayan-line">
           {order.lineItems.map((item, i) => (
-            <li key={i} className="flex items-center gap-4 py-4">
-              <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded bg-bayan-bg-alt">
-                {item.image ? (
-                  <Image
-                    src={item.image.url}
-                    alt={item.image.altText ?? item.title}
-                    fill
-                    sizes="64px"
-                    className="object-cover"
-                  />
-                ) : null}
+            <li key={i} className="flex items-center justify-between gap-4 py-4">
+              <div className="font-serif text-base text-bayan-text">
+                {item.title}
               </div>
-              <div className="flex-1">
-                <div className="font-serif text-base text-bayan-text">
-                  {item.title}
-                </div>
-                {item.variantTitle && item.variantTitle !== "Default Title" ? (
-                  <div className="mt-0.5 text-[11px] uppercase tracking-[0.18em] text-bayan-muted">
-                    {item.variantTitle}
-                  </div>
-                ) : null}
-                <div className="mt-0.5 text-[12px] text-bayan-muted">
-                  Qty {item.quantity}
-                </div>
+              <div className="text-[12px] uppercase tracking-[0.18em] text-bayan-muted">
+                Qty {item.quantity}
               </div>
-              {item.price ? (
-                <div className="text-sm font-medium text-bayan-text">
-                  {formatPrice(item.price.amount, item.price.currencyCode)}
-                </div>
-              ) : null}
             </li>
           ))}
         </ul>
 
-        <div className="mt-6 flex items-center justify-between border-t border-bayan-line pt-6">
-          <span className="text-[11px] font-medium uppercase tracking-[0.28em] text-bayan-text">
-            Total
-          </span>
-          <span className="font-serif text-2xl text-bayan-text">
-            {formatPrice(order.totalPrice.amount, order.totalPrice.currencyCode)}
-          </span>
-        </div>
+        {order.total ? (
+          <div className="mt-6 flex items-center justify-between border-t border-bayan-line pt-6">
+            <span className="text-[11px] font-medium uppercase tracking-[0.28em] text-bayan-text">
+              Total
+            </span>
+            <span className="font-serif text-2xl text-bayan-text">
+              {formatPrice(order.total.amount, order.total.currencyCode)}
+            </span>
+          </div>
+        ) : null}
       </div>
     </section>
-  );
-}
-
-function Badge({ label }: { label: string }) {
-  return (
-    <span className="rounded-full border border-bayan-line px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-bayan-muted">
-      {label}
-    </span>
   );
 }
