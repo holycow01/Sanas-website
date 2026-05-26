@@ -3,6 +3,7 @@ import { Check } from "lucide-react";
 import { Reveal } from "@/components/reveal";
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { formatPrice } from "@/lib/format";
+import { BRAND } from "@/lib/brand";
 
 type PageProps = {
   params: Promise<{ orderId: string }>;
@@ -40,12 +41,9 @@ export default async function OrderConfirmationPage({
   };
   const bankReady = bank.name && bank.accountNumber;
 
-  const whatsappNumber =
-    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "923000000000";
-  const whatsappMsg = encodeURIComponent(
+  const whatsappHref = BRAND.whatsapp(
     `Hi — here is my deposit screenshot for order #${orderId}.`,
   );
-  const whatsappHref = `https://wa.me/${whatsappNumber}?text=${whatsappMsg}`;
 
   return (
     <section className="px-6 pb-24 pt-12 md:px-9 md:pt-16">
@@ -162,10 +160,10 @@ export default async function OrderConfirmationPage({
             </a>{" "}
             or email{" "}
             <a
-              href="mailto:hello@bayan.pk"
+              href={`mailto:${BRAND.email}`}
               className="text-bayan-primary-dark hover:underline"
             >
-              hello@bayan.pk
+              {BRAND.email}
             </a>
             .
           </p>

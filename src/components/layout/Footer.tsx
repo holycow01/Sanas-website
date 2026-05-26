@@ -1,41 +1,26 @@
 import Link from "next/link";
+import { BRAND } from "@/lib/brand";
 
-const COLUMNS: Array<{ title: string; links: Array<{ label: string; href: string }> }> = [
-  {
-    title: "Shop",
-    links: [
-      { label: "All Products", href: "/shop" },
-      { label: "New Arrivals", href: "/shop?sort=newest" },
-      { label: "Size Guide", href: "/size-guide" },
-    ],
-  },
+type FooterLink = { label: string; href: string; external?: boolean };
+
+const COLUMNS: Array<{ title: string; links: FooterLink[] }> = [
   {
     title: "Help",
     links: [
       { label: "Size Guide", href: "/size-guide" },
-      { label: "Shipping", href: "/faq#shipping" },
-      { label: "Returns", href: "/faq#returns" },
-      { label: "FAQ", href: "/faq" },
-      { label: "Track Order", href: "/account/orders" },
-    ],
-  },
-  {
-    title: "About",
-    links: [
-      { label: "Our Story", href: "/about" },
-      { label: "Stockists", href: "/contact#stockists" },
-      { label: "Contact", href: "/contact" },
-      { label: "Press", href: "/about#press" },
-      { label: "Careers", href: "/about#careers" },
+      { label: "FAQs", href: "/faq" },
+      {
+        label: "Track Order",
+        href: BRAND.whatsapp("Hi Bayan — I'd like to track my order."),
+        external: true,
+      },
     ],
   },
   {
     title: "Connect",
     links: [
-      { label: "Instagram", href: "https://instagram.com/bayan_ethnicwear" },
-      { label: "TikTok", href: "https://tiktok.com/@bayan_ethnicwear" },
-      { label: "WhatsApp", href: "https://wa.me/923000000000" },
-      { label: "Email Us", href: "mailto:hello@bayan.pk" },
+      { label: "Instagram", href: BRAND.instagramUrl, external: true },
+      { label: "WhatsApp", href: BRAND.whatsappUrl, external: true },
     ],
   },
 ];
@@ -45,8 +30,8 @@ const PAY = ["VISA", "MASTER", "JAZZCASH", "EASYPAISA", "COD 50%"];
 export function Footer() {
   return (
     <footer className="bg-bayan-bg-dark px-9 pb-6 pt-20 text-bayan-bg max-[480px]:px-6">
-      <div className="mx-auto mb-[60px] grid max-w-[1400px] grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-10 max-[880px]:grid-cols-2 max-[880px]:gap-8 max-[480px]:grid-cols-1">
-        <div className="max-[880px]:col-span-2 max-[480px]:col-span-1">
+      <div className="mx-auto mb-[60px] grid max-w-[1400px] grid-cols-[2fr_1fr_1fr] gap-10 max-[640px]:grid-cols-1 max-[640px]:gap-8">
+        <div>
           <div className="font-serif text-[32px] font-semibold leading-none tracking-[0.14em]">
             BAYAN
           </div>
@@ -67,12 +52,23 @@ export function Footer() {
             <ul className="space-y-2.5">
               {col.links.map((l) => (
                 <li key={l.label}>
-                  <Link
-                    href={l.href}
-                    className="text-[13px] text-bayan-bg/70 transition-colors duration-300 hover:text-bayan-accent"
-                  >
-                    {l.label}
-                  </Link>
+                  {l.external ? (
+                    <a
+                      href={l.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[13px] text-bayan-bg/70 transition-colors duration-300 hover:text-bayan-accent"
+                    >
+                      {l.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={l.href}
+                      className="text-[13px] text-bayan-bg/70 transition-colors duration-300 hover:text-bayan-accent"
+                    >
+                      {l.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

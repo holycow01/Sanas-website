@@ -1,6 +1,7 @@
 import { Heart } from "lucide-react";
 import { Reveal } from "@/components/reveal";
 import { SectionHead } from "@/components/section-head";
+import { BRAND } from "@/lib/brand";
 
 type Tile = {
   background: string;
@@ -75,7 +76,7 @@ export function InstagramGrid() {
   return (
     <section className="bg-bayan-bg px-6 py-[120px] md:px-9">
       <SectionHead
-        eyebrow="@bayan_ethnicwear"
+        eyebrow={`@${BRAND.instagramHandle}`}
         titleStart="Follow the"
         titleEm="Atelier"
       />
@@ -84,7 +85,7 @@ export function InstagramGrid() {
         {TILES.map((tile, i) => (
           <Reveal key={i} delay={i * 0.06}>
             <a
-              href="https://instagram.com/bayan_ethnicwear"
+              href={BRAND.instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="group relative block aspect-square overflow-hidden bg-bayan-bg-alt"
@@ -119,7 +120,7 @@ export function InstagramGrid() {
 
       <Reveal className="mt-12 text-center">
         <a
-          href="https://instagram.com/bayan_ethnicwear"
+          href={BRAND.instagramUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="text-[13px] uppercase tracking-[0.28em] text-bayan-text transition-colors hover:text-bayan-primary-dark"

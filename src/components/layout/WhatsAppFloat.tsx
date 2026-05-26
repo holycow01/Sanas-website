@@ -1,14 +1,10 @@
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
-
-const FALLBACK = "923000000000";
+import { BRAND } from "@/lib/brand";
 
 export function WhatsAppFloat() {
-  const number = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || FALLBACK;
-  const href = `https://wa.me/${number}`;
-
   return (
     <a
-      href={href}
+      href={BRAND.whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat on WhatsApp"

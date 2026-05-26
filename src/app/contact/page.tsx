@@ -4,6 +4,7 @@ import { Reveal } from "@/components/reveal";
 import { ContactForm } from "@/components/contact-form";
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
+import { BRAND } from "@/lib/brand";
 
 export const metadata: Metadata = {
   title: "Contact — Bayan",
@@ -11,12 +12,8 @@ export const metadata: Metadata = {
     "Reach the Bayan atelier on WhatsApp, Instagram or email — we usually reply within a business day.",
 };
 
-const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "923000000000";
-const instagram = process.env.NEXT_PUBLIC_INSTAGRAM_HANDLE || "bayan_ethnicwear";
-const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@bayan.pk";
-
 export default function ContactPage() {
-  const whatsappHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Hi Bayan — I have a question.")}`;
+  const whatsappHref = BRAND.whatsapp("Hi Bayan — I have a question.");
 
   return (
     <section className="px-6 pb-24 pt-12 md:px-9 md:pt-16">
@@ -51,17 +48,17 @@ export default function ContactPage() {
                 value="Fastest way to reach us"
               />
               <ContactCard
-                href={`https://instagram.com/${instagram}`}
+                href={BRAND.instagramUrl}
                 external
                 icon={<InstagramIcon className="h-5 w-5" />}
                 label="Instagram"
-                value={`@${instagram}`}
+                value={`@${BRAND.instagramHandle}`}
               />
               <ContactCard
-                href={`mailto:${email}`}
+                href={`mailto:${BRAND.email}`}
                 icon={<Mail className="h-5 w-5" strokeWidth={1.4} />}
                 label="Email"
-                value={email}
+                value={BRAND.email}
               />
 
               <div className="mt-2 rounded-lg border border-bayan-line bg-bayan-bg-alt/40 p-6">
