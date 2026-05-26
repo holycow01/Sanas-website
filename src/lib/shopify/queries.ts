@@ -178,3 +178,41 @@ export const GET_CART_QUERY = /* GraphQL */ `
     }
   }
 `;
+
+export const GET_CUSTOMER_QUERY = /* GraphQL */ `
+  query GetCustomer($token: String!) {
+    customer(customerAccessToken: $token) {
+      id
+      firstName
+      lastName
+      email
+      phone
+      orders(first: 50, sortKey: PROCESSED_AT, reverse: true) {
+        edges {
+          node {
+            id
+            orderNumber
+            name
+            processedAt
+            financialStatus
+            fulfillmentStatus
+            totalPrice { amount currencyCode }
+            lineItems(first: 50) {
+              edges {
+                node {
+                  title
+                  quantity
+                  variant {
+                    title
+                    image { url altText width height }
+                    price { amount currencyCode }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;

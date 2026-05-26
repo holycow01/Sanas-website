@@ -16,6 +16,7 @@ const LINKS = [
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
   const { totalQuantity, openCart, ready } = useCart();
   const cartCount = ready ? totalQuantity : 0;
 
@@ -24,6 +25,11 @@ export function Nav() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    // Readable companion cookie set on login (token itself stays httpOnly).
+    setSignedIn(document.cookie.includes("bayan_signed_in=1"));
   }, []);
 
   useEffect(() => {
@@ -73,9 +79,19 @@ export function Nav() {
             <IconButton label="Wishlist" className="hidden sm:inline-flex">
               <Heart className="h-5 w-5" strokeWidth={1.4} />
             </IconButton>
-            <IconButton label="Account" className="hidden sm:inline-flex">
+            <Link
+              href="/account"
+              aria-label={signedIn ? "My account" : "Sign in"}
+              className="relative hidden h-9 w-9 items-center justify-center p-1.5 text-bayan-text transition-colors duration-300 hover:text-bayan-primary-dark sm:inline-flex"
+            >
               <User className="h-5 w-5" strokeWidth={1.4} />
-            </IconButton>
+              {signedIn ? (
+                <span
+                  aria-hidden="true"
+                  className="absolute right-1 top-1 h-2 w-2 rounded-full bg-bayan-primary-dark ring-2 ring-bayan-bg"
+                />
+              ) : null}
+            </Link>
             <IconButton label="Cart" onClick={openCart}>
               <ShoppingBag className="h-5 w-5" strokeWidth={1.4} />
               {cartCount > 0 ? (
@@ -112,18 +128,14 @@ export function Nav() {
                 {l.label}
               </Link>
             ))}
+            <Link
+              href="/account"
+              onClick={() => setMenuOpen(false)}
+              className="font-serif text-4xl text-bayan-text transition-colors hover:text-bayan-primary-dark"
+            >
+              {signedIn ? "My Account" : "Sign In"}
+            </Link>
           </nav>
-          <div className="flex items-center justify-center gap-6 border-t border-bayan-line px-6 py-6 text-bayan-muted">
-            <IconButton label="Search">
-              <Search className="h-5 w-5" strokeWidth={1.4} />
-            </IconButton>
-            <IconButton label="Wishlist">
-              <Heart className="h-5 w-5" strokeWidth={1.4} />
-            </IconButton>
-            <IconButton label="Account">
-              <User className="h-5 w-5" strokeWidth={1.4} />
-            </IconButton>
-          </div>
         </div>
       ) : null}
     </>
