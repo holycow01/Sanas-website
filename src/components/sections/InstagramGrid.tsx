@@ -1,75 +1,19 @@
-import { Heart } from "lucide-react";
+import Image from "next/image";
 import { Reveal } from "@/components/reveal";
 import { SectionHead } from "@/components/section-head";
+import { InstagramIcon } from "@/components/icons/InstagramIcon";
 import { BRAND } from "@/lib/brand";
 
-type Tile = {
-  background: string;
-  /** stroke color override for tiles with light backgrounds */
-  strokeLight?: boolean;
-  art: React.ReactNode;
-};
+/** Real @wearbayan posts — image lives in /public/images/instagram, links to the post. */
+type Post = { image: string; postUrl: string };
 
-const TILES: Tile[] = [
-  {
-    background: "linear-gradient(135deg, #6f8161, #4d5b41)",
-    art: (
-      <path
-        d="M30 90 L30 40 Q30 20 50 20 Q70 20 70 40 L70 90 M40 20 Q50 8 60 20"
-        strokeWidth="1.5"
-      />
-    ),
-  },
-  {
-    background: "linear-gradient(135deg, #c1a572, #9d8453)",
-    art: (
-      <path
-        d="M50 12 Q50 50 50 92 M50 30 Q35 34 28 44 M50 30 Q65 34 72 44 M50 50 Q33 54 24 68 M50 50 Q67 54 76 68"
-        strokeWidth="1.5"
-      />
-    ),
-  },
-  {
-    background: "linear-gradient(135deg, #e8dfca, #c1a572)",
-    strokeLight: true,
-    art: (
-      <>
-        <path
-          d="M25 90 Q50 30 75 90 M25 90 Q15 60 25 35 M75 90 Q85 60 75 35 M50 35 Q50 16 50 8"
-          strokeWidth="1.5"
-        />
-        <circle cx="50" cy="14" r="4" />
-      </>
-    ),
-  },
-  {
-    background: "linear-gradient(135deg, #4d5b41, #2a2e25)",
-    art: (
-      <path
-        d="M30 90 L30 50 Q30 25 50 25 Q70 25 70 50 L70 90 M40 25 Q50 8 60 25 M50 50 L50 90"
-        strokeWidth="1.5"
-      />
-    ),
-  },
-  {
-    background: "linear-gradient(135deg, #9d8453, #6f8161)",
-    art: (
-      <path
-        d="M50 12 L50 90 M30 32 Q50 22 70 32 M25 56 Q50 46 75 56 M30 78 Q50 70 70 78"
-        strokeWidth="1.5"
-      />
-    ),
-  },
-  {
-    background: "linear-gradient(135deg, #f1ead8, #d8cfb8)",
-    strokeLight: true,
-    art: (
-      <path
-        d="M20 90 L20 60 Q20 30 50 30 Q80 30 80 60 L80 90 M30 30 Q50 8 70 30 M50 30 L50 90"
-        strokeWidth="1.5"
-      />
-    ),
-  },
+const POSTS: Post[] = [
+  { image: "/images/instagram/1.jpg", postUrl: "https://www.instagram.com/p/DYrP-UvDiKK/" },
+  { image: "/images/instagram/2.jpg", postUrl: "https://www.instagram.com/p/DYmKCFguBrs/" },
+  { image: "/images/instagram/3.jpg", postUrl: "https://www.instagram.com/p/DYrfKHrDmVo/" },
+  { image: "/images/instagram/4.jpg", postUrl: "https://www.instagram.com/p/DYpACa8jQ5f/" },
+  { image: "/images/instagram/5.jpg", postUrl: "https://www.instagram.com/p/DYtMAbQCK6O/" },
+  { image: "/images/instagram/6.jpg", postUrl: "https://www.instagram.com/p/DYuUub5DU6N/" },
 ];
 
 export function InstagramGrid() {
@@ -82,36 +26,24 @@ export function InstagramGrid() {
       />
 
       <div className="mx-auto grid max-w-[1400px] grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-6">
-        {TILES.map((tile, i) => (
-          <Reveal key={i} delay={i * 0.06}>
+        {POSTS.map((post, i) => (
+          <Reveal key={post.image} delay={i * 0.06}>
             <a
-              href={BRAND.instagramUrl}
+              href={post.postUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="group relative block aspect-square overflow-hidden bg-bayan-bg-alt"
-              aria-label="View on Instagram"
+              aria-label="View this post on Instagram"
             >
-              <div
-                className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.06]"
-                style={{ background: tile.background }}
+              <Image
+                src={post.image}
+                alt="Bayan on Instagram"
+                fill
+                sizes="(min-width: 768px) 16vw, (min-width: 640px) 33vw, 50vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-[1.06]"
               />
-              <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-40">
-                <svg
-                  viewBox="0 0 100 100"
-                  className="w-[48%]"
-                  fill="none"
-                  stroke={
-                    tile.strokeLight
-                      ? "rgba(42,46,37,0.5)"
-                      : "rgba(250,246,236,0.85)"
-                  }
-                  aria-hidden="true"
-                >
-                  {tile.art}
-                </svg>
-              </div>
               <div className="absolute inset-0 flex items-center justify-center bg-bayan-bg-dark/55 text-bayan-bg opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <Heart className="h-[22px] w-[22px]" strokeWidth={1.6} />
+                <InstagramIcon className="h-[22px] w-[22px]" />
               </div>
             </a>
           </Reveal>
